@@ -1,0 +1,19 @@
+{
+  "name": "freebird-web-client-server-spec",
+  "version": "0.0.4",
+  "description": "Freebird web Clien/Server Message Definitions (through websocket)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simenkid/freebird-web-client-server-spec.git"
+  },
+  "author": "Simen Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simenkid/freebird-web-client-server-spec/issues"
+  },
+  "homepage": "https://github.com/simenkid/freebird-web-client-server-spec#readme"
+}
