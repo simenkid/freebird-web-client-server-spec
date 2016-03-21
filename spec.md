@@ -27,7 +27,7 @@ Freebird Client/Server Message Formats (through websocket)
   
 This document describes the APIs of how a freebird web Client can communicate with the freebird Server through [websocket](http://www.websocket.org/). The APIs are based on a _**Request**_, _**Response**_, and _**Indication**_ messages model. The message object (JSON) has a `__intf` field to denote which type a message is. The message type can be **'REQ'**, **'RSP'**, or **'IND'**.  
   
-The freebird framework has _**net**_, _**dev**, _ and _**gad**_ subsystems responsible for network, device, and gadget management, respectively. In brief, a network is formed with many devices, and each device may have some gadgets on it. A gadget is the real application in a manchine network.  
+The freebird framework has _**net**_, _**dev**_, and _**gad**_ subsystems responsible for network, device, and gadget management, respectively. In brief, a network is formed with many devices, and each device may have some gadgets on it. A gadget is the real application in a manchine network.  
   
 Let's take a wifi weather station in a machine network for example. The weather station is made up of temperature, humidity, and pm2.5 sensors, where each sensor is a gadget. A device, such as Arduino(with wifi connection), ESP8266, MT7688, RaspberryPi or Beaglebone, is the carrier of applications(gadgets). Now we know, this weather station has 3 gadgets on it, but only has a single device in it. Here is another example, we have a bluetooth low-energy (BLE) light switch in the network. This is a simple one-device-with-one-gadget machine, we can say "there is only one gadget, a light switch, implemented on a TI CC2540 BLE SoC device."  
   
