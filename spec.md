@@ -19,6 +19,23 @@ Freebird Client/Server Message Formats (through websocket)
     - [Netcore Information (ncInfo) Object](#ncInfoObj)  
     - [Gadget Classes](#gadClasses)  
     - [ Attribute Report Configuration Object](#reportCfg)  
+  
+### Change Logs  
+####2016/03/29:  
+    * 3. Data Model >> Indication 
+        * Indication Example: 'devIncoming'
+            - change `enable: true` to `enabled: true`
+        * Indication Example: 'gadIncoming'
+            - change `enable: true` to `enabled: true`
+    * 5. Appendix >> Device Information (devInfo) Object
+        * Properties: Change Property 'enable' to 'enabled'
+        * Example: Change Property 'enable' to 'enabled'
+    * 5. Appendix >> Gadget Information (gadInfo) Object
+        * Properties: Change Property 'enable' to 'enabled'
+        * Example: Change Property 'enable' to 'enabled'
+    * 5. Appendix >> Netcore Information (ncInfo) Object
+        * Properties: Change Property 'enable' to 'enabled'
+        * Example: Change Property 'enable' to 'enabled'
 
 <br />
   
@@ -300,7 +317,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         id: 18,
         netcore: 'mqtt-core',
         role: 'client',         // depends on protocol. This rol string is defined by the netcore developer
-        enable: true,
+        enabled: true,
         status: 'online'
         address: {
             permanent: '00:0c:29:ff:ed:7c',
@@ -367,7 +384,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     {
         id: 32,
         owner: 18,
-        enable: true,
+        enabled: true,
         profile: '',
         class: 'lightCtrl',
         attributes: {
@@ -436,7 +453,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | id           | Number          | Device id                                                                                             |
     | netcore      | String          | Name of the netcore that holds this device                                                            |
     | role         | String          | Device role. Depends on protocol, i.e., 'peripheral' for BLE devices, 'router' for zigbee devices     |
-    | enable       | Boolean         | Is this device enabled?                                                                               |
+    | enabled      | Boolean         | Is this device enabled?                                                                               |
     | status       | String          | Device status, can be 'online', 'sleep', or 'offline'                                                 |
     | address      | Object          | Device permanent and dynamic addresses. { permanent: '00:0c:29:ff:ed:7c', dynamic: '192.168.1.101'    |
     | joinTime     | Number          | Device join time. UNIX time in secs                                                                   |
@@ -459,7 +476,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         id: 6,
         netcore: 'mqtt-core',
         role: 'client',         // depends on protocol
-        enable: true,
+        enabled: true,
         status: 'online'
         address: {
             permanent: '00:0c:29:ff:ed:7c',
@@ -502,7 +519,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     |--------------|-----------------|-----------------------------------------------------------------------------------------------------------|
     | id           | Number          | Gadget id                                                                                                 |
     | owner        | Number          | Id of which device owns this gadget                                                                       |
-    | enable       | Boolean         | Is this gadget enabled?                                                                                   |
+    | enabled      | Boolean         | Is this gadget enabled?                                                                                   |
     | profile      | String          | The profile of this gadget                                                                                |
     | class        | String          | The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl' |
     | attributes   | Object          | Attributes of this gadget                                                                                 |
@@ -515,7 +532,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     {
         id: 308,
         owner: 26,
-        enable: true,
+        enabled: true,
         profile: 'home_automation', // it will be an empty string '' if no profile given
         class: 'lightCtrl',
         attributes: {
@@ -536,7 +553,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | Property     | Type            | Description                                                                                      |
     |--------------|-----------------|--------------------------------------------------------------------------------------------------|
     | name         | String          | Netcore name                                                                                     |
-    | enable       | Boolean         | Is this netcore enabled?                                                                         |
+    | enabled      | Boolean         | Is this netcore enabled?                                                                         |
     | protocol     | Object          | [TBD] Network protocol of this netcore.                                                          |
     | numDevs      | Number          | Number of devices managed by this netcore                                                        |
     | numGads      | Number          | Number of gadgets managed by this netcore                                                        |
@@ -548,7 +565,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     ```js
     {
         name: 'zigbee-core',
-        enable: true,
+        enabled: true,
         protocol: {
             application: 'zcl',
             transport: '',
