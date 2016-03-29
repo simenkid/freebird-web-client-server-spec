@@ -24,13 +24,13 @@ Freebird Client/Server Message Formats (through websocket)
 
 ####2016/03/29:  
 
-* 3. Data Model >> Indication  
+* 3.Data Model >> Indication  
     * Indication Example: 'devIncoming'  
         - change `enable: true` to `enabled: true`  
     * Indication Example: 'gadIncoming'  
         - change `enable: true` to `enabled: true`  
 
-* 5. Appendix >>  
+* 5.Appendix >>  
     * Device Information (devInfo) Object  
         - Properties: Change Property 'enable' to 'enabled'  
         - Example: Change Property 'enable' to 'enabled'  
