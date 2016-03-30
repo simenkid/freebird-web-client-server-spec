@@ -45,16 +45,19 @@ Freebird Client/Server Message Formats (through websocket)
 
 * 3.Data Model >> 
     * Request
-        - Subsystem: change 'dev' to 'net' of Command Name 'ban'
-        - Subsystem: change 'dev' to 'net' of Command Name 'unban'
+        - Subsystem: change namespace 'dev' to 'net' of command 'ban'
+        - Subsystem: change namespace 'dev' to 'net' of command 'unban'
     * Response
-        - Response Data Type: change Response Data Type to Data Key:Type
-        - Example: change all Response data to an object
-        - For example, in Command Name is 'getAllDevIds' case: Data Key:Type field value is `ids:Number[]` and Example field value is `{ ids: [ 1, 2, 3, 8, 12 ] }`
+        - Response Data Type: change table title **Response Data Type** to **Data Key:Type**
+        - Example: change all Response `data` type to an object  
+        - Take command 'getAllDevIds' for example: **Data Key:Type** is _ids:Number[]_ and **Example** shows the data object given with `{ ids: [ 1, 2, 3, 8, 12 ] }` which has a key of `'ids'` and value of an array of numbers.  
     * Indication
-        - Response Data Type: change Response Data Type to Data Key:Type
-        - Indication Example: change all Indication data to an object
-            - For example, data is change to `{ status: 'online' }` in Indication Example: 'statusChanged'
+        - Response Data Type: change table tile **Response Data Type** to **Data Key:Type**  
+        - Indication Example: change all Indication `data` type to an object  
+            - For example, `data` changes to `{ status: 'online' }` in Indication Example: 'statusChanged'
+
+* Change indication type of 'attrChanged' to 'attrsChanged' 
+* Change key `'attributes'` of gadInfo to `'attrs'`
 
 <br />
   
@@ -167,7 +170,7 @@ The `__intf` field in a message can be 'REQ', 'RSP' or 'IND' to denote the inter
     |----------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------|
     | __intf   | String          | 'IND'                                                                                                                                       |
     | subsys   | String          | Only 3 types accepted. They are 'net', 'dev', and 'gad' to denote which subsystem is this indication coming from                            |
-    | type     | String          | There are few types of indication accepted, such as 'attrChanged'. Please see section [Indication types](#IndTypes) for details             |
+    | type     | String          | There are few types of indication accepted, such as 'attrsChanged'. Please see section [Indication types](#IndTypes) for details            |
     | id       | Number          | Id of the sender. id is meaningless if `subsys === 'net'`. id is **device id** if `subsys === 'dev'`. id is **gadget id** if `subsys === 'gad'` |
     | data     | Depends         | Data along with the indication. Please see section [Indication Data Model](#IndicationData) to learn more about the indication data format  |
   
@@ -184,7 +187,7 @@ The `__intf` field in a message can be 'REQ', 'RSP' or 'IND' to denote the inter
     | 'gadIncoming'   | A gadget is incoming                                                                |
     | 'gadLeaving'    | A gadget is leaving                                                                 |
     | 'attrReport'    | A report message of certain attribute(s) on a gadget                                |
-    | 'attrChanged'   | Attribue(s) on a gadget or a device has changed                                     |
+    | 'attrsChanged'  | Attribue(s) on a gadget or a device has changed                                     |
 
 - **Message Example**:  
   
@@ -192,7 +195,7 @@ The `__intf` field in a message can be 'REQ', 'RSP' or 'IND' to denote the inter
     { 
         __intf: 'IND',
         subsys: 'gad',
-        type: 'attrChanged',
+        type: 'attrsChanged',
         id: 147,            // sender of this indication is a gadget with id = 147
         data: {
             sensorValue: 24
@@ -281,19 +284,19 @@ The response message is an object with keys { __intf, subsys, seq, id, cmd, stat
 <a name="IndicationData"></a>
 ### Indication  
   
-The indication message is an object with keys { __intf, subsys, type, id, data }. `type` shows the type of indication. The `data` field contains the indication data, and it will always be an object.
+The indication message is an object with keys { __intf, subsys, type, id, data }. `type` shows the type of indication. The `data` field contains indication data which is an object.  
 
 | Subsystem | Indication Type | Data Key:Type                   | Description                                                                         |
 |-----------|-----------------|---------------------------------|-------------------------------------------------------------------------------------|
 | net       | 'permitJoining' | netcore:String, leftTime:Number | Server is now allowing devices to join the network                                  |
 | dev       | 'netChanged'    | address:Object, status:String   | Network parameter(s) of a device has changed                                        |
 | dev       | 'statusChanged' | status:String                   | Status of a device has changed. The status can be 'online', 'sleep', and 'offline'  |
-| dev       | 'devIncoming'   | dev:[devInfo](#devInfoObj)      | A device is incoming. The indication data is a devInfo object                       |
+| dev       | 'devIncoming'   | [devInfo](#devInfoObj)          | A device is incoming. The indication data is a devInfo object                       |
 | dev       | 'devLeaving'    | id:Number                       | A device is leaving. The indication data is the device id                           |
-| gad       | 'gadIncoming'   | gad:[gadInfo](#gadInfoObj)      | A gadget is incoming. The indication data is a gadInfo object                       |
+| gad       | 'gadIncoming'   | [gadInfo](#gadInfoObj)          | A gadget is incoming. The indication data is a gadInfo object                       |
 | gad       | 'gadLeaving'    | id:Number                       | A gadget is leaving. The indication data is the gadget id                           |
-| gad       | 'attrReport'    | attr:Object                     | Report message of a certain attribute on a gadget                                   |
-| dev/gad   | 'attrChanged'   | attrs:Object                    | Attribute(s) on a gadget or a device has changed                                    |
+| gad       | 'attrReport'    | Object                          | Report message of a certain attribute on a gadget                                   |
+| dev/gad   | 'attrsChanged'  | Object                          | Attribute(s) on a gadget or a device has changed                                    |
   
 * Indication Example: 'permitJoining'  
   
@@ -333,44 +336,42 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
   
     ```js
     // indMsg.subsys == 'dev'
-    // indMsg.data.dev is a devInfo object
+    // indMsg.data is a devInfo object
     {
-        dev: {
-            id: 18,
-            netcore: 'mqtt-core',
-            role: 'client',         // depends on protocol. This rol string is defined by the netcore developer
-            enabled: true,
-            status: 'online'
-            address: {
-                permanent: '00:0c:29:ff:ed:7c',
-                dynamic: '192.168.1.24'
-            },
-            joinTime: 1458008311,
-            traffic: {
-                in: 12,
-                out: 6
-            },
-            parent: 0,
-            gads: [ 5, 6, 7, 8 ]
+        id: 18,
+        netcore: 'mqtt-core',
+        role: 'client',         // depends on protocol. This rol string is defined by the netcore developer
+        enabled: true,
+        status: 'online'
+        address: {
+            permanent: '00:0c:29:ff:ed:7c',
+            dynamic: '192.168.1.24'
+        },
+        joinTime: 1458008311,
+        traffic: {
+            in: 12,
+            out: 6
+        },
+        parent: 0,
+        gads: [ 5, 6, 7, 8 ]
 
-            manufacturer: 'freebird',
-            model: 'lwmqn-7688-duo',
-            serial: 'lwmqn-2016-03-15-20',
-            version: {
-                hardware: 'v1.2.0',
-                software: 'v0.8.4',
-                firmware: 'v2.0.0'
-            },
-            power: {
-                type: 'line',
-                voltage: '5V'
-            },
+        manufacturer: 'freebird',
+        model: 'lwmqn-7688-duo',
+        serial: 'lwmqn-2016-03-15-20',
+        version: {
+            hardware: 'v1.2.0',
+            software: 'v0.8.4',
+            firmware: 'v2.0.0'
+        },
+        power: {
+            type: 'line',
+            voltage: '5V'
+        },
 
-            // name, description, and location are writable and can be modified by users
-            name: 'sample_device',
-            description: 'This is a device example',
-            location: 'bedroom'
-        }
+        // name, description, and location are writable and can be modified by users
+        name: 'sample_device',
+        description: 'This is a device example',
+        location: 'bedroom'
     }
     ```
   
@@ -384,24 +385,20 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     }
     ```
   
-* Indication Example: 'attrChanged'  
+* Indication Example: 'attrsChanged'  
   
     ```js
     // indMsg.subsys == 'dev'
-    // indMsg.data.attr is an object to inform the device attribute changes
+    // indMsg.data is an object to inform the device attribute(s) changes
     {    
-        attrs: {
-            description: 'Move from office to kitchen',
-            location: 'kitchen'
-        }
+        description: 'Move from office to kitchen',
+        location: 'kitchen'
     }
 
     // indMsg.subsys == 'gad'
-    // indMsg.data.attr is an object to inform the gadget attribute changes
+    // indMsg.data is an object to inform the gadget attribute(s) changes
     {    
-        attrs: {
-            onOff: 0
-        }
+        onOff: 0
     }
     ```
   
@@ -409,22 +406,20 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
   
     ```js
     // indMsg.subsys == 'gad'
-    // indMsg.data.gad is a gadInfo object
+    // indMsg.data is a gadInfo object
     {
-        gad: {
-            id: 32,
-            owner: 18,
-            enabled: true,
-            profile: '',
-            class: 'lightCtrl',
-            attributes: {
-                onOff: 1,
-                dimmer: 80
-            },
-            // name and description writable and can be modified by users
-            name: 'sampleLight',
-            description: 'This is a simple light controller'
-        }
+        id: 32,
+        owner: 18,
+        enabled: true,
+        profile: '',
+        class: 'lightCtrl',
+        attrs: {
+            onOff: 1,
+            dimmer: 80
+        },
+        // name and description writable and can be modified by users
+        name: 'sampleLight',
+        description: 'This is a simple light controller'
     }
     ```
   
@@ -442,11 +437,9 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
   
     ```js
     // indMsg.subsys == 'gad'
-    // indMsg.data.attr is an object to report the gadget attribute
+    // indMsg.data is an object with a single reported gadget attribute.
     {
-        attr: {
-            sensorValue: 18
-        }
+        sensorValue: 18
     }
     ```
   
@@ -557,7 +550,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | enabled      | Boolean         | Is this gadget enabled?                                                                                   |
     | profile      | String          | The profile of this gadget                                                                                |
     | class        | String          | The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl' |
-    | attributes   | Object          | Attributes of this gadget                                                                                 |
+    | attrs        | Object          | Attributes of this gadget                                                                                 |
     | name         | String          | Gadget name. This attribute can be modified by user (via UI tools)                                        |
     | description  | String          | Gadget description. This attribute can be modified by user (via UI tools)                                 |
   
@@ -570,7 +563,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         enabled: true,
         profile: 'home_automation', // it will be an empty string '' if no profile given
         class: 'lightCtrl',
-        attributes: {
+        attrs: {
             onOff: 1,
             dimmer: 80
         },
