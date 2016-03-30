@@ -149,7 +149,9 @@ The `__intf` field in a message can be 'REQ', 'RSP' or 'IND' to denote the inter
         id: 0,
         cmd: 'getAllDevIds',
         status: 0,
-        data: [ 2, 4, 18, 61 ]
+        data: {
+            ids: [ 2, 4, 18, 61 ]
+        }
     }
     ```
 ********************************************
