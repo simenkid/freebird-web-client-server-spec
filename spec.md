@@ -59,6 +59,12 @@ Freebird Client/Server Message Formats (through websocket)
 * Change indication type of 'attrChanged' to 'attrsChanged' 
 * Change key `'attributes'` of gadInfo to `'attrs'`
 
+####2016/4/1
+
+* 5.Appendix >> 
+    * Gadget Information (gadInfo) Object  
+        - Change Property 'owner' to 'dev'  
+
 <br />
   
 <a name="Overiew"></a>  
@@ -411,7 +417,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     // indMsg.data is a gadInfo object
     {
         id: 32,
-        owner: 18,
+        dev: 18,
         enabled: true,
         profile: '',
         class: 'lightCtrl',
@@ -548,7 +554,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | Property     | Type            | Description                                                                                               |
     |--------------|-----------------|-----------------------------------------------------------------------------------------------------------|
     | id           | Number          | Gadget id                                                                                                 |
-    | owner        | Number          | Id of which device owns this gadget                                                                       |
+    | dev          | Number          | Id of which device owns this gadget                                                                       |
     | enabled      | Boolean         | Is this gadget enabled?                                                                                   |
     | profile      | String          | The profile of this gadget                                                                                |
     | class        | String          | The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl' |
@@ -561,7 +567,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     ```js
     {
         id: 308,
-        owner: 26,
+        dev: 26,
         enabled: true,
         profile: 'home_automation', // it will be an empty string '' if no profile given
         class: 'lightCtrl',
