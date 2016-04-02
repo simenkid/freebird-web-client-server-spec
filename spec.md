@@ -65,6 +65,12 @@ Freebird Client/Server Message Formats (through websocket)
     * Gadget Information (gadInfo) Object  
         - Change Property 'owner' to 'dev'  
 
+####2016/4/2
+
+* 5.Appendix >> 
+    * Netcore Information (ncInfo) Object  
+        - Typo: Change data type of startTime from _String_ to _Number_  
+
 <br />
   
 <a name="Overiew"></a>  
@@ -593,7 +599,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | protocol     | Object          | [TBD] Network protocol of this netcore.                                                          |
     | numDevs      | Number          | Number of devices managed by this netcore                                                        |
     | numGads      | Number          | Number of gadgets managed by this netcore                                                        |
-    | startTime    | String          | Start time of this netcore. (UNIX time in secs)                                                  |
+    | startTime    | Number          | Start time of this netcore. (UNIX time in secs)                                                  |
     | traffic      | Object          | Accumulated inbound and outbound data since netcore started. { in: 70, out: 226 } (unit: kBytes) |
   
 * Example  
