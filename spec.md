@@ -1,6 +1,8 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
+version: v0.0.5
+
 ## Table of Contents
 
 1. [Overiew](#Overiew)  
@@ -70,6 +72,25 @@ Freebird Client/Server Message Formats (through websocket)
 * 5.Appendix >> 
     * Netcore Information (ncInfo) Object  
         - Typo: Change data type of startTime from _String_ to _Number_  
+
+####2016/4/6
+
+* Property `traffic` of devInfo and ncInfo objects is re-defined, the unit is changed from kBytes to bytes
+    * OrIginal format: { in: 16, out: 72 }  (unit: kBytes)
+    * New Format:
+
+    ```js
+        {
+            in: {
+                hits: 6,    // how many message received
+                bytes: 48   // (unit: bytes)
+            },
+            out: {
+                hits: 8,    // how many message transmitted
+                bytes: 96   // (unit: bytes)
+            }
+        }
+    ```
 
 <br />
   
@@ -363,8 +384,14 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         },
         joinTime: 1458008311,
         traffic: {
-            in: 12,
-            out: 6
+            in: {
+                hits: 2,
+                bytes: 24
+            },
+            out: {
+                hits: 4,
+                bytes: 32
+            }
         },
         parent: 0,
         gads: [ 5, 6, 7, 8 ]
@@ -499,7 +526,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | status       | String          | Device status, can be 'online', 'sleep', or 'offline'                                                 |
     | address      | Object          | Device permanent and dynamic addresses. { permanent: '00:0c:29:ff:ed:7c', dynamic: '192.168.1.101'    |
     | joinTime     | Number          | Device join time. UNIX time in secs                                                                   |
-    | traffic      | Object          | Accumulated inbound and outbound data since device joined. { in: 70, out: 226 } (unit: kBytes)        |
+    | traffic      | Object          | Accumulated inbound and outbound data since device joined. { in: { hits: 6, bytes: 24 }, out: { hits: 3, bytes: 30 } } (unit: bytes)        |
     | parent       | Number          | Parent device id. This id is 0 if device parent is the netcore                                        |
     | gads         | Number[]        | A list of gadget ids that this device owns                                                            |
     | manufacturer | String          | Manufacturer name                                                                                     |
@@ -526,8 +553,14 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         },
         joinTime: 1458008208,
         traffic: {              // accumulated data (kB) since device joined
-            in: 86,
-            out: 2114
+            in: {
+                hits: 6,
+                bytes: 72
+            },
+            out: {
+                hits: 12,
+                bytes: 96
+            }
         },
         parent: 0,              // parent is the netcore
         gads: [ 5, 6 ]          // gadgets it owns
@@ -600,7 +633,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | numDevs      | Number          | Number of devices managed by this netcore                                                        |
     | numGads      | Number          | Number of gadgets managed by this netcore                                                        |
     | startTime    | Number          | Start time of this netcore. (UNIX time in secs)                                                  |
-    | traffic      | Object          | Accumulated inbound and outbound data since netcore started. { in: 70, out: 226 } (unit: kBytes) |
+    | traffic      | Object          | Accumulated inbound and outbound data since netcore started. { in: { hits: 6, bytes: 24 }, out: { hits: 3, bytes: 30 } } (unit: bytes)  |
   
 * Example  
   
@@ -619,8 +652,14 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         numGads: 46,
         startTime: 1458008208,
         traffic: {
-            in: 44765,
-            out: 84114
+            in: {
+                hits: 6,
+                bytes: 24
+            },
+            out: {
+                hits: 3,
+                bytes: 30
+            }
         }
     }
     ```
