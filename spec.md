@@ -1,7 +1,7 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
-version: v0.0.5
+version: v0.0.6 (latest updated: 2016/4/26)
 
 ## Table of Contents
 
@@ -97,9 +97,11 @@ version: v0.0.5
 * 3.Data Model >> 
     * Request  
         - Move `remove` and `ping` form namespace 'dev' to 'net'  
+        - Move `ban` and `unban` form namespace 'dev' to 'net'  
 
     * Response  
-        - Move `remove` and `ping` form namespace 'dev' to 'net' 
+        - Move `remove` and `ping` form namespace 'dev' to 'net'  
+        - Move `ban` and `unban` form namespace 'dev' to 'net'  
 
 <br />
   
@@ -307,13 +309,13 @@ The response message is an object with keys { __intf, subsys, seq, id, cmd, stat
 | net       | 'reset'        | -                  | Response contains no data                            | {}                                           |
 | net       | 'enable'       | -                  | Response contains no data                            | {}                                           |
 | net       | 'disable'      | -                  | Response contains no data                            | {}                                           |
+| net       | 'ban'          | -                  | Response contains no data                            | {}                                           |
+| net       | 'unban'        | -                  | Response contains no data                            | {}                                           |
 | net       | 'remove'       | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }           |
 | net       | 'ping'         | time:Number        | Round-trip time in ms                                | { time: 12 }                                 |
 | dev       | 'read'         | value:Depends      | The read value. Can be anything                      | { value: 3 }                                 |
 | dev       | 'write'        | value:Depends      | The written value. Can be anything                   | { value: 'kitchen' }                         |
 | dev       | 'identify'     | -                  | Response contains no data                            | {}                                           |
-| dev       | 'ban'          | -                  | Response contains no data                            | {}                                           |
-| dev       | 'unban'        | -                  | Response contains no data                            | {}                                           |
 | gad       | 'read'         | value:Depends      | The read value. Can be anything                      | { value: 371.42 }                            |
 | gad       | 'write'        | value:Depends      | The written value. Can be anything                   | { value: false }                             |
 | gad       | 'exec'         | result:Depends     | The data returned by the procedure. Can be anything  | { result: 'completed' }                      |
