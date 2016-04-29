@@ -1,7 +1,7 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
-version: v0.0.6 (latest updated: 2016/4/26)
+version: v0.1.0 (latest updated: 2016/4/29)
 
 ## Table of Contents
 
@@ -102,6 +102,36 @@ version: v0.0.6 (latest updated: 2016/4/26)
     * Response  
         - Move `remove` and `ping` form namespace 'dev' to 'net'  
         - Move `ban` and `unban` form namespace 'dev' to 'net'  
+
+
+####2016/4/29 (Major Changes) - spec version upgrades to v0.1.0
+
+* 2.Interfaces >> 
+    ### Indication  
+        - **Indication types**: Re-organize all indications
+
+* 3.Data Model >> 
+    * Request  
+        - Add commands 'getProps' and 'setProps' of 'dev' subsys
+        - Add commands 'getProps' and 'setProps' of 'gad' subsys
+
+    * Response  
+        - Add response from commands 'getProps' and 'setProps' of 'dev' subsys
+        - Add response from commands 'getProps' and 'setProps' of 'gad' subsys
+
+    * Indication  
+        - Re-organize all indications and their messages  
+
+* 5.Appendix >> 
+    ### Device Information (devInfo) Object
+        - devInfo turned into a new format
+
+    ### Gadget Information (gadInfo) Object
+        - gadInfo turned into a new format
+
+    ### Netcore Information (ncInfo) Object
+        - ncInfo turned into a new format
+
 
 <br />
   
@@ -222,18 +252,35 @@ The `__intf` field in a message can be 'REQ', 'RSP' or 'IND' to denote the inter
   
 <a name="IndTypes"></a>
 - **Indication types**:  
-  
-    | Indication Type | Description                                                                         |
-    |-----------------|-------------------------------------------------------------------------------------|
-    | 'permitJoining' | Server is now allowing devices to join the network.                                 |
-    | 'netChanged'    | Network parameter(s) of a device has changed                                        |
-    | 'statusChanged' | Status of a device has changed. The status can be 'online', 'sleep', and 'offline'  |
-    | 'devIncoming'   | A device is incoming                                                                |
-    | 'devLeaving'    | A device is leaving                                                                 |
-    | 'gadIncoming'   | A gadget is incoming                                                                |
-    | 'gadLeaving'    | A gadget is leaving                                                                 |
-    | 'attrReport'    | A report message of certain attribute(s) on a gadget                                |
-    | 'attrsChanged'  | Attribue(s) on a gadget or a device has changed                                     |
+   
+    | subsys  | Indication Type      | Description                                                                                    |
+    |---------|----------------------|------------------------------------------------------------------------------------------------|
+    | net     | 'error'              | Netcore error occurs                                                                           |
+    | net     | 'started'            | A netcore is started                                                                           |
+    | net     | 'stopped'            | A netcore is stopped                                                                           |
+    | net     | 'enabled'            | A netcore is enabled                                                                           |
+    | net     | 'disabled'           | A netcore is disabled                                                                          |
+    | net     | 'permitJoining'      | A netcore is now allowing devices to join the network                                          |
+    | net     | 'bannedDevIncoming'  | A banned device is trying to join the network                                                  |
+    | net     | 'bannedGadIncoming'  | A banned gadget is trying to join the network                                                  |
+    | net     | 'bannedDevReporting' | A banned device is trying to report its attributes                                             |
+    | net     | 'bannedGadReporting' | A banned gadget is trying to report its attributes                                             |
+    | dev     | 'error'              | Device error occurs                                                                            |
+    | dev     | 'devIncoming'        | A new device is incoming                                                                       |
+    | dev     | 'devLeaving'         | A device is leaving                                                                            |
+    | dev     | 'netChanged'         | Network information of a device has changed                                                    |
+    | dev     | 'statusChanged'      | Status of a device has changed. The status can be 'online', 'sleep', 'offline', and 'unknown'  |
+    | dev     | 'propsChanged'       | Meta-property(ies) of a device has changed                                                     |
+    | dev     | 'attrsChanged'       | Attribue(s) on a device has changed                                                            |
+    | dev     | 'attrsReport'        | A report message of certain attribute(s) on a device.                                          |
+    | gad     | 'error'              | Gadget error occurs                                                                            |
+    | gad     | 'gadIncoming'        | A new gadget is incoming                                                                       |
+    | gad     | 'gadLeaving'         | A gadget is leaving                                                                            |
+    | gad     | 'panelChanged'       | Panel information of a gadget has changed                                                      |
+    | gad     | 'propsChanged'       | Meta-property(ies) of a gadget has changed                                                     |
+    | gad     | 'attrsChanged'       | Attribue(s) on a gadget has changed                                                            |
+    | gad     | 'attrsReport'        | A report message of certain attribute(s) on a gadget                                           |
+
 
 - **Message Example**:  
   
@@ -265,29 +312,33 @@ The request message is an object with keys { __intf, subsys, seq, id, cmd, args 
   
 | Subsystem | Command Name   | Arguments (args)         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 |-----------|----------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| net       | 'getAllDevIds' | { [ncName] }             | Get identifiers of all devices on freebird Server. **ncName** is a string and is optional. If **ncName** is given, only identifiers of devices managed by that netcore will be returned from Server.                                                                                                                                                                                                                                                                                                                                                                                   |
-| net       | 'getAllGadIds' | { [ncName] }             | Get identifiers of all gadgets on freebird Server. **ncName** is a string and is optional. If **ncName** is given, only identifiers of gadgets managed by that netcore will be returned from Server.                                                                                                                                                                                                                                                                                                                                                                                   |
+| net       | 'getAllDevIds' | { [ncName] }             | Get identifiers of all devices on freebird Server. **ncName** is a string and is optional. If **ncName** is given, only identifiers of devices managed by that netcore will be returned from Server.                                                                                                                                                                                                                                                                                                                                                                                         |
+| net       | 'getAllGadIds' | { [ncName] }             | Get identifiers of all gadgets on freebird Server. **ncName** is a string and is optional. If **ncName** is given, only identifiers of gadgets managed by that netcore will be returned from Server.                                                                                                                                                                                                                                                                                                                                                                                         |
 | net       | 'getDevs'      | { ids }                  | Get information of devices by their ids. **ids** is an array of numbers and each number is a device id, i.e., given `{ ids: [ 5, 6, 77 ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | net       | 'getGads'      | { ids }                  | Get gadget information by gadget id. **ids** is an array of numbers and each number is a gadget id, i.e., given `{ ids: [ 23, 14, 132 ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| net       | 'getNetcores'  | { ncNames }              | Get netcore information by netcore names. **ncNames** is an array of strings and each string is a netcore name, i.e., given `{ ncNames: [ 'ble-core', 'zigbee-core' ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| net       | 'getBlacklist' | { ncName }               | Get blacklist of the banned devices. **ncName** is the netcore name of which you like to get the blacklist from. **ncName** should be a string. i.e., given `{ ncName: 'ble-core' }`                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| net       | 'permitJoin'   | { ncName, duration }     | Allow or disallow devices to join the network. **ncName** is the name of which netcore you like to allow for device joining and **ncName** should be a string. **duration** is the time in seconds which should be a number. Set duration to 0 will immediately close the admission. For example, given `{ ncName: 'zigbee-core', duration: 60 }` will allow zigbee devices to join the zigbee network for 60 seconds.                                                                                                         |
-| net       | 'maintain'     | { ncName }               | Maintain the network. **ncName** is the name of which netcore you like to maintain. **ncName** should be a string. When a netcore starts to maintain its own network, all devices managed by it will be refreshed. For example, given `{ ncName: 'ble-core' }` to let the BLE netcore do its maintenance.                                                                                                                                                                                                                                                                                   |
-| net       | 'reset'        | { ncName }               | Reset the network. **ncName** is the name of which netcore you like to reset. **ncName** should be a string. Reset a network will remove all devices managed by that netcore. Once reset, the banned devices in the netcore blacklist will also be removed.                                                                                                                                                                                                                                                                                                                                          |
+| net       | 'getNetcores'  | { ncNames }              | Get netcore information by netcore names. **ncNames** is an array of strings and each string is a netcore name, i.e., given `{ ncNames: [ 'ble-core', 'zigbee-core' ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| net       | 'getBlacklist' | { ncName }               | Get blacklist of the banned devices. **ncName** is the netcore name of which you like to get the blacklist from. **ncName** should be a string. i.e., given `{ ncName: 'ble-core' }`                                                                                                                                                                                                                                                                                                                                                                                                         |
+| net       | 'permitJoin'   | { ncName, duration }     | Allow or disallow devices to join the network. **ncName** is the name of which netcore you like to allow for device joining and **ncName** should be a string. **duration** is the time in seconds which should be a number. Set duration to 0 will immediately close the admission. For example, given `{ ncName: 'zigbee-core', duration: 60 }` will allow zigbee devices to join the zigbee network for 60 seconds.                                                                                                                                                                       |
+| net       | 'maintain'     | { ncName }               | Maintain the network. **ncName** is the name of which netcore you like to maintain. **ncName** should be a string. When a netcore starts to maintain its own network, all devices managed by it will be refreshed. For example, given `{ ncName: 'ble-core' }` to let the BLE netcore do its maintenance.                                                                                                                                                                                                                                                                                    |
+| net       | 'reset'        | { ncName }               | Reset the network. **ncName** is the name of which netcore you like to reset. **ncName** should be a string. Reset a network will remove all devices managed by that netcore. Once reset, the banned devices in the netcore blacklist will also be removed.                                                                                                                                                                                                                                                                                                                                  |
 | net       | 'enable'       | { ncName }               | Enable the network. **ncName** is the name of which netcore you like to enable. (The netcore is enabled by default.)                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| net       | 'disable'      | { ncName }               | Disable the network. **ncName** is the name of which netcore you like to disable. If netcore is disabled, no messages can be send out and received from remote devices. That is, messages will be ignored and you will not get any message from the netcore on freebird Server.                                                                                                                                                                                                                                                                                                                |
+| net       | 'disable'      | { ncName }               | Disable the network. **ncName** is the name of which netcore you like to disable. If netcore is disabled, no messages can be send out and received from remote devices. That is, messages will be ignored and you will not get any message from the netcore on freebird Server.                                                                                                                                                                                                                                                                                                              |
 | net       | 'ban'          | { ncName, permAddr }     | Ban a device from the network. Once a device has been banned, freebird will always reject its joining request. If a device is already in the network, freebird will first remove it from the network. **ncName** is the netcore that manages the device you'd like to ban. **permAddr** is the permanent address of  the banned device. For example, given `{ ncName: 'zigbee-core', permAddr: '0x00124b0001ce4b89' }` to ban a zigbee device with an IEEE address of 0x00124b0001ce4b89. The permanent address depends on protocol, such as IEEE address for zigbee devices, BD address for BLE devices, and MAC address for IP-based devices. |
-| net       | 'unban'        | { ncName, permAddr }     | Unban a device. **ncName** is the netcore that manages the banned device. **permAddr** is the permanent address of the banned device. For example, given `{ ncName: 'zigbee-core', permAddr: '0x00124b0001ce4b89' }` to unban a zigbee device with an IEEE address of 0x00124b0001ce4b89.                                                                                                                                                                                                                                                                                              |
+| net       | 'unban'        | { ncName, permAddr }     | Unban a device. **ncName** is the netcore that manages the banned device. **permAddr** is the permanent address of the banned device. For example, given `{ ncName: 'zigbee-core', permAddr: '0x00124b0001ce4b89' }` to unban a zigbee device with an IEEE address of 0x00124b0001ce4b89.                                                                                                                                                                                                                                                                                                    |
 | net       | 'remove'       | { id }                   | Remove a device from the network. **id** is the id of which device to remove.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| net       | 'ping'        | { id }                   | Ping a device in the network. **id** is the id of which device you like to ping.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| net       | 'ping'         | { id }                   | Ping a device in the network. **id** is the id of which device you like to ping.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | dev       | 'read'         | { id, attrName }         | Read an attribute on a device. **id** is the id of which device you like to read from. **attrName** is the attribute you like to read. For example, given `{ id: 20, attrName: 'location' }` to read the location attribute from the device with id = 20.                                                                                                                                                                                                                                                                                                                                    |
-| dev       | 'write'        | { id, attrName, value }  | Write a value to an attribute on a device. **id** is the id of which device you like to write a value to. **attrName** is the attribute to be written. For example, given `{ id: 20, attrName: 'location', value: 'kitchen' }` to set the device location attribute to 'kitchen'.                                                                                                                                                                                                                                                                                                               |
+| dev       | 'write'        | { id, attrName, value }  | Write a value to an attribute on a device. **id** is the id of which device you like to write a value to. **attrName** is the attribute to be written. For example, given `{ id: 20, attrName: 'location', value: 'kitchen' }` to set the device location attribute to 'kitchen'.                                                                                                                                                                                                                                                                                                            |
 | dev       | 'identify'     | { id }                   | Identify a device in the network. **id** is the id of which device to be identified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| gad       | 'read'         | { id, attrName }         | Read an attribute on a gadget. **id** is the id of which gadget you like to read from. **attrName** is the attribute you like to read. For example, given `{ id: 2316, attrName: 'sensorValue' }` to read the sensed value attribute from a temperature sensor (the sensor is a gadget with id = 2316).                                                                                                                                                                                                                                                                                       |
-| gad       | 'write'        | { id, attrName, value }  | Write a value to an attribute on a gadget. **id** is the id of which gadget you like to write a value to. **attrName** is the attribute to be written. For example, given `{ id: 1314, attrName: 'onOff', value: 1 }` to turn on a light bulb (the light bulb is a gadget with id = 1314).                                                                                                                                                                                                                                                                                                     |
-| gad       | 'exec'         | { id, attrName[, params] } | Invoke a remote procedure on a gadget. **id** is the id of which gadget you like to perform its particular procedure. **attrName** is the attribute name of an executable procedure. **params** is an array of parameters given in order to meet the procedure signature. The signature depends on how a developer declare his(/her) own procedure. For example, given `{ id: 9, attrName: 'blink', value: [ 10, 500 ] }` to blink a LED on a gadget 10 times with 500ms interval.                                                                                                             |
-| gad       | 'setReportCfg' | { id, attrName, [rptCfg](#reportCfg) }    | Set the condition for an attribute reporting from a gadget.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| dev       | 'getProps'     | { propNames }            | Get device meta-properties. **propNames** is an array of strings and each string is a meta-property name, i.e., given `{ propNames: [ 'location', 'description' ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| dev       | 'setProps'     | { props }                | Set device meta-properties. **props** is an object contains meta-properties to set, i.e., given `{ props: { location: 'bedroom', description: 'for my baby' } }`.                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| gad       | 'read'         | { id, attrName }         | Read an attribute on a gadget. **id** is the id of which gadget you like to read from. **attrName** is the attribute you like to read. For example, given `{ id: 2316, attrName: 'sensorValue' }` to read the sensed value attribute from a temperature sensor (the sensor is a gadget with id = 2316).                                                                                                                                                                                                                                                                                      |
+| gad       | 'write'        | { id, attrName, value }  | Write a value to an attribute on a gadget. **id** is the id of which gadget you like to write a value to. **attrName** is the attribute to be written. For example, given `{ id: 1314, attrName: 'onOff', value: 1 }` to turn on a light bulb (the light bulb is a gadget with id = 1314).                                                                                                                                                                                                                                                                                                   |
+| gad       | 'exec'         | { id, attrName[, params] } | Invoke a remote procedure on a gadget. **id** is the id of which gadget you like to perform its particular procedure. **attrName** is the attribute name of an executable procedure. **params** is an array of parameters given in order to meet the procedure signature. The signature depends on how a developer declare his(/her) own procedure. For example, given `{ id: 9, attrName: 'blink', value: [ 10, 500 ] }` to blink a LED on a gadget 10 times with 500ms interval.                                                                                                         |
+| gad       | 'setReportCfg' | { id, attrName, [rptCfg](#reportCfg) }    | Set the condition for an attribute reporting from a gadget.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | gad       | 'getReportCfg' | { id, attrName }         | Get the report settings of an attribute on a gadget.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| gad       | 'getProps'     | { propNames }            | Get gadget meta-properties. **propNames** is an array of strings and each string is a meta-property name, i.e., given `{ propNames: [ 'description' ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| gad       | 'setProps'     | { props }                | Set gadget meta-properties. **props** is an object contains meta-properties to set, i.e., given `{ props: { description: 'temperature sensor 3', installed: true } }`.                                                                                                                                                                                                                                                                                                                                                                                                                       |
   
 ********************************************
   
@@ -296,31 +347,35 @@ The request message is an object with keys { __intf, subsys, seq, id, cmd, args 
   
 The response message is an object with keys { __intf, subsys, seq, id, cmd, status, data }. `status` shows if the request is successful. The `data` field contains the respond data according to the request. `data` will always be an object, and it will be an empty object if the request is unsuccessful.  
   
-| Subsystem | Command Name   | Data Key:Type      | Data Description                                     | Example                                      |
-|-----------|----------------|--------------------|------------------------------------------------------|----------------------------------------------|
-| net       | 'getAllDevIds' | ids:Number[]       | Array of device identifiers                          | { ids: [ 1, 2, 3, 8, 12 ] }                  |
-| net       | 'getAllGadIds' | ids:Number[]       | Array of gadget identifiers                          | { ids: [ 2, 3, 5, 11, 12, 13, 14, 15 ] }     |
-| net       | 'getDevs'      | devs:devInfo[]     | Array of device information objects                  | { devs: [ [devInfo](#devInfoObj), ...  ] }   |
-| net       | 'getGads'      | gads:gadInfo[]     | Array of gadget information objects                  | { gads: [ [gadInfo](#gadInfoObj) , ... ] }   |
-| net       | 'getNetcores'  | netcores:ncInfo[]  | Array of netcore information objects                 | { netcores: [ [ncInfo](#ncInfoObj), ... ] }  |
-| net       | 'getBlacklist' | list:String[]      | Array of banned device permanent address             | { list: [ '0x00124b0001ce4b89', ... ] }      |
-| net       | 'permitJoin'   | -                  | Response contains no data                            | {}                                           |
-| net       | 'maintain'     | -                  | Response contains no data                            | {}                                           |
-| net       | 'reset'        | -                  | Response contains no data                            | {}                                           |
-| net       | 'enable'       | -                  | Response contains no data                            | {}                                           |
-| net       | 'disable'      | -                  | Response contains no data                            | {}                                           |
-| net       | 'ban'          | -                  | Response contains no data                            | {}                                           |
-| net       | 'unban'        | -                  | Response contains no data                            | {}                                           |
-| net       | 'remove'       | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }           |
-| net       | 'ping'         | time:Number        | Round-trip time in ms                                | { time: 12 }                                 |
-| dev       | 'read'         | value:Depends      | The read value. Can be anything                      | { value: 3 }                                 |
-| dev       | 'write'        | value:Depends      | The written value. Can be anything                   | { value: 'kitchen' }                         |
-| dev       | 'identify'     | -                  | Response contains no data                            | {}                                           |
-| gad       | 'read'         | value:Depends      | The read value. Can be anything                      | { value: 371.42 }                            |
-| gad       | 'write'        | value:Depends      | The written value. Can be anything                   | { value: false }                             |
-| gad       | 'exec'         | result:Depends     | The data returned by the procedure. Can be anything  | { result: 'completed' }                      |
-| gad       | 'setReportCfg' | -                  | Response contains no data                            | {}                                           |
-| gad       | 'getReportCfg' | cfg:Object         | Report settings object                               | { cfg: [rptCfg](#reportCfg) }                |
+| Subsystem | Command Name   | Data Key:Type      | Data Description                                     | Example                                               |
+|-----------|----------------|--------------------|------------------------------------------------------|------------------------------------------------------ |
+| net       | 'getAllDevIds' | ids:Number[]       | Array of device identifiers                          | { ids: [ 1, 2, 3, 8, 12 ] }                           |
+| net       | 'getAllGadIds' | ids:Number[]       | Array of gadget identifiers                          | { ids: [ 2, 3, 5, 11, 12, 13, 14, 15 ] }              |
+| net       | 'getDevs'      | devs:devInfo[]     | Array of device information objects                  | { devs: [ [devInfo](#devInfoObj), ...  ] }            |
+| net       | 'getGads'      | gads:gadInfo[]     | Array of gadget information objects                  | { gads: [ [gadInfo](#gadInfoObj) , ... ] }            |
+| net       | 'getNetcores'  | netcores:ncInfo[]  | Array of netcore information objects                 | { netcores: [ [ncInfo](#ncInfoObj), ... ] }           |
+| net       | 'getBlacklist' | list:String[]      | Array of banned device permanent address             | { list: [ '0x00124b0001ce4b89', ... ] }               |
+| net       | 'permitJoin'   | -                  | Response contains no data                            | {}                                                    |
+| net       | 'maintain'     | -                  | Response contains no data                            | {}                                                    |
+| net       | 'reset'        | -                  | Response contains no data                            | {}                                                    |
+| net       | 'enable'       | -                  | Response contains no data                            | {}                                                    |
+| net       | 'disable'      | -                  | Response contains no data                            | {}                                                    |
+| net       | 'ban'          | -                  | Response contains no data                            | {}                                                    |
+| net       | 'unban'        | -                  | Response contains no data                            | {}                                                    |
+| net       | 'remove'       | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }                    |
+| net       | 'ping'         | time:Number        | Round-trip time in ms                                | { time: 12 }                                          |
+| dev       | 'read'         | value:Depends      | The read value. Can be anything                      | { value: 3 }                                          |
+| dev       | 'write'        | value:Depends      | The written value. Can be anything                   | { value: 'kitchen' }                                  |
+| dev       | 'identify'     | -                  | Response contains no data                            | {}                                                    |
+| dev       | 'getProps'     | props:Depends      | Meta-properties got. The props got is an object.     | { props: { name: 'mywifi-dev', location: 'kitchen' } } |
+| dev       | 'setProps'     | -                  | Response contains no data                            | {}                                                    |
+| gad       | 'read'         | value:Depends      | The read value. Can be anything                      | { value: 371.42 }                                     |
+| gad       | 'write'        | value:Depends      | The written value. Can be anything                   | { value: false }                                      |
+| gad       | 'exec'         | result:Depends     | The data returned by the procedure. Can be anything  | { result: 'completed' }                               |
+| gad       | 'setReportCfg' | -                  | Response contains no data                            | {}                                                    |
+| gad       | 'getReportCfg' | cfg:Object         | Report settings object                               | { cfg: [rptCfg](#reportCfg) }                         |
+| gad       | 'getProps'     | props:Depends      | Meta-properties got. The props got is an object.     | { props: { name: 'mysensor1' } }                      |
+| gad       | 'setProps'     | -                  | Response contains no data                            | {}                                                    |
   
 
 ********************************************
@@ -332,166 +387,292 @@ The response message is an object with keys { __intf, subsys, seq, id, cmd, stat
   
 The indication message is an object with keys { __intf, subsys, type, id, data }. `type` shows the type of indication. The `data` field contains indication data which is an object.  
 
-| Subsystem | Indication Type | Data Key:Type                   | Description                                                                         |
-|-----------|-----------------|---------------------------------|-------------------------------------------------------------------------------------|
-| net       | 'permitJoining' | netcore:String, leftTime:Number | Server is now allowing devices to join the network                                  |
-| dev       | 'netChanged'    | address:Object, status:String   | Network parameter(s) of a device has changed                                        |
-| dev       | 'statusChanged' | status:String                   | Status of a device has changed. The status can be 'online', 'sleep', and 'offline'  |
-| dev       | 'devIncoming'   | [devInfo](#devInfoObj)          | A device is incoming. The indication data is a devInfo object                       |
-| dev       | 'devLeaving'    | id:Number                       | A device is leaving. The indication data is the device id                           |
-| gad       | 'gadIncoming'   | [gadInfo](#gadInfoObj)          | A gadget is incoming. The indication data is a gadInfo object                       |
-| gad       | 'gadLeaving'    | id:Number                       | A gadget is leaving. The indication data is the gadget id                           |
-| gad       | 'attrReport'    | Object                          | Report message of a certain attribute on a gadget                                   |
-| dev/gad   | 'attrsChanged'  | Object                          | Attribute(s) on a gadget or a device has changed                                    |
-  
-* Indication Example: 'permitJoining'  
-  
+| subsys  | Indication Type     | Data Object **Key:Type**                                       | Description                                                                                    |
+|---------|---------------------|----------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| net     | 'error'             | `{ netcore:String, error: { code:Number, info:String } }`      | Netcore error occurs                                                                           |
+| net     | 'started'           | `{ netcore:String }`                                           | A netcore is started                                                                           |
+| net     | 'stopped'           | `{ netcore:String }`                                           | A netcore is stopped                                                                           |
+| net     | 'enabled'           | `{ netcore:String }`                                           | A netcore is enabled                                                                           |
+| net     | 'disabled'          | `{ netcore:String }`                                           | A netcore is disabled                                                                          |
+| net     | 'permitJoining'     | `{ netcore:String, timeLeft:Number }`                          | A netcore is now allowing or disallowing devices to join the network                           |
+| net     | 'bannedDevIncoming' | `{ netcore:String, permAddr:String }`                          | A banned device is trying to join the network                                                  |
+| net     | 'bannedGadIncoming' | `{ netcore:String, permAddr:String, auxId:String \| Number }`  | A banned gadget is trying to join the network                                                  |
+| net     | 'bannedDevReporting'| `{ netcore:String, permAddr:String }`                          | A banned device is trying to report its attributes                                             |
+| net     | 'bannedGadReporting'| `{ netcore:String, permAddr:String, auxId:String \| Number }`  | A banned gadget is trying to report its attributes                                             |
+| dev     | 'error'             | `{ code:Number, info:String }`                                 | Device error occurs                                                                            |
+| dev     | 'devIncoming'       | [devInfo](#devInfoObj)                                         | A new device is incoming                                                                       |
+| dev     | 'devLeaving'        | -                                                              | A device is leaving                                                                            |
+| dev     | 'netChanged'        | [netInfo](#netInfoObj)                                         | Network information of a device has changed                                                    |
+| dev     | 'statusChanged'     | `{ status:String }`                                            | Status of a device has changed. The status can be 'online', 'sleep', 'offline', and 'unknown'  |
+| dev     | 'propsChanged'      | [devInfo.props](#devPropsObj)                                  | Meta-property(ies) of a device has changed                                                     |
+| dev     | 'attrsChanged'      | [devInfo.attrs](#devAttrsObj)                                  | Attribue(s) on a device has changed                                                            |
+| dev     | 'attrsReport'       | [devInfo.attrs](#devAttrsObj)                                  | A report message of certain attribute(s) on a device.                                          |
+| gad     | 'error'             | `{ code:Number, info:String }`                                 | Gadget error occurs                                                                            |
+| gad     | 'gadIncoming'       | [gadInfo](#gadInfoObj)                                         | A new gadget is incoming                                                                       |
+| gad     | 'gadLeaving'        | -                                                              | A gadget is leaving                                                                            |
+| gad     | 'panelChanged'      | [gadInfo.pannel](#gadPanelObj)                                 | Panel information of a gadget has changed                                                      |
+| gad     | 'propsChanged'      | [gadInfo.props](#gadPropsObj)                                  | Meta-property(ies) of a gadget has changed                                                     |
+| gad     | 'attrsChanged'      | [gadInfo.attrs](#gadAttrsObj)                                  | Attribue(s) on a gadget has changed                                                            |
+| gad     | 'attrsReport'       | [gadInfo.attrs](#gadAttrsObj)                                  | A report message of certain attribute(s) on a gadget                                           |
+
+* Indication Example: indMsg of 'permitJoining'  
+
     ```js
-    // indMsg.subsys == 'net'
-    // indMsg.data is an object
     {
-        netcore: 'zigbee-core',
-        leftTime: 60            // netcore does not allow for devices to join the network if leftTime is 0
+        __intf: 'IND',
+        subsys: 'net',
+        type: 'permitJoining',
+        id: 0,
+        data: {
+            netcore: 'zigbee-core',
+            timeLeft: 60            // netcore does not allow for devices to join the network if timeLeft is 0
+        }
     }
     ```
   
-* Indication Example: 'netChanged'  
+* Indication Example: indMsg of 'devIncoming'  
   
     ```js
-    // indMsg.subsys == 'dev'
-    // indMsg.data is an object
     {
-        address: {
-            dynamic: '192.168.1.32'
-        },
-        status: 'online'    // status changed, an 'statusChanged' indication will also be fired  
-    }
-    ```
-  
-* Indication Example: 'statusChanged'  
-  
-    ```js
-    // indMsg.subsys == 'dev'
-    // indMsg.data.status is a string
-    {
-        status: 'online'
-    }
-    ```
-  
-* Indication Example: 'devIncoming'  
-  
-    ```js
-    // indMsg.subsys == 'dev'
-    // indMsg.data is a devInfo object
-    {
-        id: 18,
-        netcore: 'mqtt-core',
-        role: 'client',         // depends on protocol. This rol string is defined by the netcore developer
-        enabled: true,
-        status: 'online'
-        address: {
-            permanent: '00:0c:29:ff:ed:7c',
-            dynamic: '192.168.1.24'
-        },
-        joinTime: 1458008311,
-        traffic: {
-            in: {
-                hits: 2,
-                bytes: 24
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'devIncoming',
+        id: 18,                 // device id is 18
+        data: {                 // data is devInfo object
+            netcore: 'mqtt-core',
+            id: 18,
+            gads: [ 116, 117, 120 ],
+            net: {
+                enabled: true,
+                joinTime: 1458008311,
+                timestamp: 1458008617,
+                role: 'client',         // depends on protocol
+                parent: '0',            // parent is the netcore
+                status: 'online'
+                address: {
+                    permanent: '00:0c:29:ff:ed:7c',
+                    dynamic: '192.168.1.24'
+                },
+                traffic: {              // accumulated data since device joined
+                    in: {
+                        hits: 2,
+                        bytes: 24
+                    },
+                    out: {
+                        hits: 4,
+                        bytes: 32
+                    }
+                }
             },
-            out: {
-                hits: 4,
-                bytes: 32
+            props: {    // props: name, description, and location are writable and can be modified by users
+                name: 'sample_device',
+                description: 'This is a device example',
+                location: 'bedroom'
+            },
+            attrs: {
+                manufacturer: 'freebird',
+                model: 'lwmqn-7688-duo',
+                serial: 'lwmqn-2016-04-29-03',
+                version: {
+                    hw: 'v1.2.0',
+                    sw: 'v0.8.4',
+                    fw: 'v2.0.0'
+                },
+                power: {
+                    type: 'line',
+                    voltage: '5V'
+                }
             }
-        },
-        parent: 0,
-        gads: [ 5, 6, 7, 8 ]
+        }
+    }
+    ```
+  
+* Indication Example: indMsg of 'devLeaving'  
+  
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'devLeaving',
+        id: 27,                   // device id is 27
+        data: undefined
+    }
+    ```
+  
+* Indication Example: indMsg of device 'netChanged'  
 
-        manufacturer: 'freebird',
-        model: 'lwmqn-7688-duo',
-        serial: 'lwmqn-2016-03-15-20',
-        version: {
-            hardware: 'v1.2.0',
-            software: 'v0.8.4',
-            firmware: 'v2.0.0'
-        },
-        power: {
-            type: 'line',
-            voltage: '5V'
-        },
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'netChanged',
+        id: 18,                 // device id is 18
+        data: {                 // partial changes of netInfo object
+            address: {
+                dynamic: '192.168.1.32'
+            },
+            status: 'online'    // status changed, an 'statusChanged' indication will also be fired  
+        }
+    }
+    ```
+  
+* Indication Example: indMsg of device 'statusChanged'  
 
-        // name, description, and location are writable and can be modified by users
-        name: 'sample_device',
-        description: 'This is a device example',
-        location: 'bedroom'
-    }
-    ```
-  
-* Indication Example: 'devLeaving'  
-  
     ```js
-    // indMsg.subsys == 'dev'
-    // indMsg.data.id is a number
     {
-        id: 27
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'statusChanged',
+        id: 18,                 // device id is 18
+        data: {
+            status: 'online'
+        }
     }
     ```
   
-* Indication Example: 'attrsChanged'  
+* Indication Example: indMsg of device 'propsChanged'  
   
     ```js
-    // indMsg.subsys == 'dev'
-    // indMsg.data is an object to inform the device attribute(s) changes
-    {    
-        description: 'Move from office to kitchen',
-        location: 'kitchen'
+    {
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'propsChanged',
+        id: 37,                   // device id is 37
+        data: {
+            location: 'kitchen'
+        }
     }
+    ```
 
-    // indMsg.subsys == 'gad'
-    // indMsg.data is an object to inform the gadget attribute(s) changes
-    {    
-        onOff: 0
+* Indication Example: indMsg of device 'attrsChanged'  
+  
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'attrsChanged',
+        id: 16,                   // device id is 16
+        data: {
+            version: {
+                sw: 'v1.2.3'
+            },
+            serial: '2016-05-01-001'
+        }
+    }
+    ```
+
+* Indication Example: indMsg of device 'attrsReport'  
+  
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'dev',
+        type: 'attrsReport',
+        id: 77,                   // device id is 77
+        data: {
+            power: {
+                voltage: '12V'
+            }
+        }
+    }
+    ```
+
+* Indication Example: indMsg of 'gadIncoming'  
+  
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'gad',
+        type: 'gadIncoming',
+        id: 2763,                   // gadget id is 2763
+        data: {
+            id: 2763,       // gadget id
+            dev: {
+                id: 822,    // device id
+                permAddr: '0x00124b0001ce4b89'
+            },
+            panel: {
+                enabled: true,
+                profile: 'home_automation',
+                class: 'lightCtrl'
+            },
+            props: {
+                name: 'sampleLight',
+                description: 'This is a simple light controller'
+            },
+            attrs: {
+                onOff: 1,
+                dimmer: 80
+            }
+        }
     }
     ```
   
-* Indication Example: 'gadIncoming'  
+* Indication Example: indMsg of 'gadLeaving'  
   
     ```js
-    // indMsg.subsys == 'gad'
-    // indMsg.data is a gadInfo object
     {
-        id: 32,
-        dev: 18,
-        enabled: true,
-        profile: '',
-        class: 'lightCtrl',
-        attrs: {
-            onOff: 1,
-            dimmer: 80
-        },
-        // name and description writable and can be modified by users
-        name: 'sampleLight',
-        description: 'This is a simple light controller'
+        __intf: 'IND',
+        subsys: 'gad',
+        type: 'gadLeaving',
+        id: 41,                   // gadget id is 41
+        data: undefined
     }
     ```
   
-* Indication Example: 'gadLeaving'  
+* Indication Example: indMsg of gadget 'panelChanged'  
   
     ```js
-    // indMsg.subsys == 'gad'
-    // indMsg.data.id is a number
     {
-        id: 32
+        __intf: 'IND',
+        subsys: 'gad',
+        type: 'panelChanged',
+        id: 21,                   // gadget id is 21
+        data: {
+            enabled: true
+        }
     }
     ```
   
-* Indication Example: 'attrReport'  
+* Indication Example: indMsg of gadget 'propsChanged'  
   
     ```js
-    // indMsg.subsys == 'gad'
-    // indMsg.data is an object with a single reported gadget attribute.
     {
-        sensorValue: 18
+        __intf: 'IND',
+        subsys: 'gad',
+        type: 'propsChanged',
+        id: 52,                   // gadget id is 52
+        data: {
+            description: 'A good smart radio in my bedroom'
+        }
+    }
+    ```
+  
+* Indication Example: indMsg of gadget 'attrsChanged'  
+  
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'gad',
+        type: 'attrsChanged',
+        id: 83,                   // gadget id is 83
+        data: {
+            onOff: 0
+        }
+    }
+    ```
+  
+* Indication Example: indMsg of gadget 'attrsReport'  
+  
+    ```js
+    {
+        __intf: 'IND',
+        subsys: 'gad',
+        type: 'attrsReport',
+        id: 64,                   // gadget id is 64
+        data: {
+            sensorValue: 18
+        }
     }
     ```
   
@@ -532,22 +713,44 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
     | id           | Number          | Device id                                                                                             |
     | netcore      | String          | Name of the netcore that holds this device                                                            |
-    | role         | String          | Device role. Depends on protocol, i.e., 'peripheral' for BLE devices, 'router' for zigbee devices     |
-    | enabled      | Boolean         | Is this device enabled?                                                                               |
-    | status       | String          | Device status, can be 'online', 'sleep', or 'offline'                                                 |
-    | address      | Object          | Device permanent and dynamic addresses. { permanent: '00:0c:29:ff:ed:7c', dynamic: '192.168.1.101'    |
-    | joinTime     | Number          | Device join time. UNIX time in secs                                                                   |
-    | traffic      | Object          | Accumulated inbound and outbound data since device joined. { in: { hits: 6, bytes: 24 }, out: { hits: 3, bytes: 30 } } (unit: bytes)        |
-    | parent       | Number          | Parent device id. This id is 0 if device parent is the netcore                                        |
     | gads         | Number[]        | A list of gadget ids that this device owns                                                            |
+    | net          | Object          | Network information of the device.                                                                    |
+    | props        | Object          | Meta-properties of the device. This is for client users to set something to the device                |
+    | attrs        | Object          | Attributes of the device. This is attributes of the remote device.                                    |
+
+    - `net` object
+
+    | Property     | Type            | Description                                                                                           |
+    |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
+    | enabled      | Boolean         | Is this device enabled?                                                                               |
+    | joinTime     | Number          | Device join time. UNIX time in secs                                                                   |
+    | timestamp    | Number          | Device last activity. UNIX time in secs                                                               |
+    | role         | String          | Device role. Depends on protocol, i.e., 'peripheral' for BLE devices, 'router' for zigbee devices     |
+    | parent       | String          | Parent device permanent address. It is string '0' if device parent is its netcore                     |
+    | status       | String          | Device status, can be 'online', 'sleep', 'offline', or 'unknown'                                      |
+    | address      | Object          | Device permanent and dynamic addresses. { permanent: '00:0c:29:ff:ed:7c', dynamic: '192.168.1.101' }  |
+    | traffic      | Object          | Accumulated inbound and outbound data since device joined. { in: { hits: 6, bytes: 24 }, out: { hits: 3, bytes: 30 } } (unit: bytes)        |
+
+
+    <a name="devPropsObj"></a>
+    - `props` object
+
+    | Property     | Type            | Description                                                                                           |
+    |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
+    | name         | String          | Device name. This is not on the remote device and can be set by end-users.                            |
+    | description  | String          | Device description. This is not on the remote device and can be set by end-users.                     |
+    | location     | String          | Device location. This is not on the remote device and can be set by end-users.                        |
+    | _others_     | Any             | Anything end-users like to set to device `props` by setProps API.                                     |
+
+    <a name="devAttrsObj"></a>
+    - `attrs` object
+
+    | Property     | Type            | Description                                                                                           |
+    |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
     | manufacturer | String          | Manufacturer name                                                                                     |
     | model        | String          | Model name                                                                                            |
-    | serial       | String          | Serial number in string                                                                               |
-    | version      | Object          | Version tags. { hardware: '', software: 'v1.2.2', firmware: 'v0.0.8' }                                |
+    | version      | Object          | Version tags. { hw: '', sw: 'v1.2.2', fw: 'v0.0.8' }                                                  |
     | power        | Object          | Power source. { type: 'battery', voltage: '5V' }. The type can be 'line', 'battery' or 'harvester'    |
-    | name         | String          | Device name. This attribute can be modified by user (via UI tools)                                    |
-    | description  | String          | Device description. This attribute can be modified by user (via UI tools)                             |
-    | location     | String          | Device location. This attribute can be modified by user (via UI tools)                                |
   
 * Example  
   
@@ -555,44 +758,48 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     {
         id: 6,
         netcore: 'mqtt-core',
-        role: 'client',         // depends on protocol
-        enabled: true,
-        status: 'online'
-        address: {
-            permanent: '00:0c:29:ff:ed:7c',
-            dynamic: '192.168.1.73'
-        },
-        joinTime: 1458008208,
-        traffic: {              // accumulated data (kB) since device joined
-            in: {
-                hits: 6,
-                bytes: 72
+        gads: [ 116, 117 ],
+        net: {
+            enabled: true,
+            joinTime: 1458008208,
+            timestamp: 1458008617,
+            role: 'client',         // depends on protocol
+            parent: '0',            // parent is the netcore
+            status: 'online'
+            address: {
+                permanent: '00:0c:29:ff:ed:7c',
+                dynamic: '192.168.1.73'
             },
-            out: {
-                hits: 12,
-                bytes: 96
+            traffic: {              // accumulated data since device joined
+                in: {
+                    hits: 6,
+                    bytes: 72
+                },
+                out: {
+                    hits: 12,
+                    bytes: 96
+                }
             }
         },
-        parent: 0,              // parent is the netcore
-        gads: [ 5, 6 ]          // gadgets it owns
-
-        manufacturer: 'freebird',
-        model: 'lwmqn-7688-duo',
-        serial: 'lwmqn-2016-03-15-01',
-        version: {
-            hardware: 'v1.2.0',
-            software: 'v0.8.4',
-            firmware: 'v2.0.0'
+        props: {    // props: name, description, and location are writable and can be modified by users
+            name: 'sample_device',
+            description: 'This is a device example',
+            location: 'balcony'
         },
-        power: {
-            type: 'line',
-            voltage: '5V'
-        },
-
-        // name, description, and location are writable and can be modified by users
-        name: 'sample_device',
-        description: 'This is a device example',
-        location: 'balcony'
+        attrs: {
+            manufacturer: 'freebird',
+            model: 'lwmqn-7688-duo',
+            serial: 'lwmqn-2016-03-15-01',
+            version: {
+                hw: 'v1.2.0',
+                sw: 'v0.8.4',
+                fw: 'v2.0.0'
+            },
+            power: {
+                type: 'line',
+                voltage: '5V'
+            }
+        }
     }
     ```
 
@@ -601,33 +808,63 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
   
 * Properties  
 
-    | Property     | Type            | Description                                                                                               |
-    |--------------|-----------------|-----------------------------------------------------------------------------------------------------------|
-    | id           | Number          | Gadget id                                                                                                 |
-    | dev          | Number          | Id of which device owns this gadget                                                                       |
-    | enabled      | Boolean         | Is this gadget enabled?                                                                                   |
-    | profile      | String          | The profile of this gadget                                                                                |
-    | class        | String          | The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl' |
-    | attrs        | Object          | Attributes of this gadget                                                                                 |
-    | name         | String          | Gadget name. This attribute can be modified by user (via UI tools)                                        |
-    | description  | String          | Gadget description. This attribute can be modified by user (via UI tools)                                 |
+    | Property     | Type             | Description                                                                                               |
+    |--------------|------------------|-----------------------------------------------------------------------------------------------------------|
+    | id           | Number           | Gadget id                                                                                                 |
+    | dev          | Object           | Id and permanent address of which device owns this gadget. { id: 3, permAddr: '0x00124b0001ce4b89' }      |
+    | panel        | Object           | Basic information about the gadget. { enabled: true, profile: 'home', class: 'temperature' }              |
+    | props        | Object           | Meta-properties of this gadget. This is for client users to set something to the gadget                   |
+    | attrs        | Object           | Attributes of this gadget                                                                                 |
+
+    <a name="gadPanelObj"></a>
+    - `panel` object
+
+    | Property     | Type            | Description                                                                                           |
+    |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
+    | enabled      | Boolean         | Is this gadget enabled?                                                                               |
+    | profile      | String          | Optional. The profile defines the application environment, may mot be given.                          |
+    | class        | String          | The class defines what application the gadget is. The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl'                          |
+
+    <a name="gadPropsObj"></a>
+    - `props` object
+
+    | Property     | Type            | Description                                                                                           |
+    |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
+    | name         | String          | Gadget name. This is not on the remote device and can be set by end-users.                            |
+    | description  | String          | Gadget description. This is not on the remote device and can be set by end-users.                     |
+    | _others_     | Any             | Anything end-users like to set to gadget `props` by setProps API.                                     |
+
+    <a name="gadAttrsObj"></a>
+    - `attrs` object
+
+    | Property     | Type            | Description                                                                                           |
+    |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
+    | _Depends_    | Any             | The gadget attributes that could be read, written, or excuted on the remote device.                   |
+
   
+
 * Example  
   
     ```js
     {
         id: 308,
-        dev: 26,
-        enabled: true,
-        profile: 'home_automation', // it will be an empty string '' if no profile given
-        class: 'lightCtrl',
+        dev: {
+            id: 26,
+            permAddr: '0x00124b0001ce4b89'
+        },
+        panel: {
+            enabled: true,
+            profile: 'home_automation', // it will be an empty string '' if no profile given
+            class: 'lightCtrl'
+        },
+        props: {    // props: name and description writable and can be modified by end-users
+            name: 'sampleLight',
+            description: 'This is a simple light controller'
+        },
         attrs: {
             onOff: 1,
             dimmer: 80
-        },
-        // name and description writable and can be modified by users
-        name: 'sampleLight',
-        description: 'This is a simple light controller'
+        }
     }
     ```
   
@@ -636,15 +873,15 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
   
 * Properties  
   
-    | Property     | Type            | Description                                                                                      |
-    |--------------|-----------------|--------------------------------------------------------------------------------------------------|
-    | name         | String          | Netcore name                                                                                     |
-    | enabled      | Boolean         | Is this netcore enabled?                                                                         |
-    | protocol     | Object          | [TBD] Network protocol of this netcore.                                                          |
-    | numDevs      | Number          | Number of devices managed by this netcore                                                        |
-    | numGads      | Number          | Number of gadgets managed by this netcore                                                        |
-    | startTime    | Number          | Start time of this netcore. (UNIX time in secs)                                                  |
-    | traffic      | Object          | Accumulated inbound and outbound data since netcore started. { in: { hits: 6, bytes: 24 }, out: { hits: 3, bytes: 30 } } (unit: bytes)  |
+    | Property        | Type            | Description                                                                                      |
+    |-----------------|-----------------|--------------------------------------------------------------------------------------------------|
+    | name            | String          | Netcore name                                                                                     |
+    | enabled         | Boolean         | Is this netcore enabled?                                                                         |
+    | protocol        | Object          | Network protocol of this netcore.                                                          |
+    | startTime       | Number          | Start time of this netcore. (UNIX time in secs)                                                  |
+    | traffic         | Object          | Accumulated inbound and outbound data since netcore started. { in: { hits: 6, bytes: 24 }, out: { hits: 3, bytes: 30 } } (unit: bytes)  |
+    | numDevs         | Number          | Number of devices managed by this netcore                                                        |
+    | numGads         | Number          | Number of gadgets managed by this netcore                                                        |
   
 * Example  
   
@@ -652,16 +889,17 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     {
         name: 'zigbee-core',
         enabled: true,
-        protocol: {
-            application: 'zcl',
-            transport: '',
-            network: 'zigbee2007pro',
-            link: '',
-            phy: 'ieee802.15.4'
+        protocol: {              // required
+            phy: 'ieee802.15.4', // required, physical layer
+            dll: '',             // optional, data link layer
+            nwk: 'zigbee',       // required, network layer
+            tl: '',              // optional, transportation layer
+            sl: '',              // optional, session layer
+            pl: '',              // optional, presentation layer
+            apl: 'zcl',          // optional, application layer
         },
-        numDevs: 32,
-        numGads: 46,
         startTime: 1458008208,
+        defaultJoinTime: 180,
         traffic: {
             in: {
                 hits: 6,
@@ -671,7 +909,9 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
                 hits: 3,
                 bytes: 30
             }
-        }
+        },
+        numDevs: 32,
+        numGads: 46
     }
     ```
 
