@@ -107,7 +107,7 @@ version: v0.1.0 (latest updated: 2016/4/29)
 ####2016/4/29 (Major Changes) - spec version upgrades to v0.1.0
 
 * 2.Interfaces >> 
-    ### Indication  
+    * Indication  
         - **Indication types**: Re-organize all indications
 
 * 3.Data Model >> 
@@ -123,13 +123,13 @@ version: v0.1.0 (latest updated: 2016/4/29)
         - Re-organize all indications and their messages  
 
 * 5.Appendix >> 
-    ### Device Information (devInfo) Object
+    * Device Information (devInfo) Object
         - devInfo turned into a new format
 
-    ### Gadget Information (gadInfo) Object
+    * Gadget Information (gadInfo) Object
         - gadInfo turned into a new format
 
-    ### Netcore Information (ncInfo) Object
+    * Netcore Information (ncInfo) Object
         - ncInfo turned into a new format
 
 
