@@ -855,6 +855,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     ```js
     {
         id: 308,
+        netcore: 'zb-core',
         dev: {
             id: 26,
             permAddr: '0x00124b0001ce4b89'
