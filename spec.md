@@ -1,7 +1,7 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
-version: v0.1.0 (latest updated: 2016/4/29)
+version: v0.1.1 (latest updated: 2016/5/18)
 
 ## Table of Contents
 
@@ -131,6 +131,12 @@ version: v0.1.0 (latest updated: 2016/4/29)
 
     * Netcore Information (ncInfo) Object
         - ncInfo turned into a new format
+
+####2016/5/18
+
+* 5.Appendix >> 
+    * Gadget Information (gadInfo) Object  
+        - Add Property 'netcore' to gadInfo object  
 
 
 <br />
@@ -811,6 +817,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | Property     | Type             | Description                                                                                               |
     |--------------|------------------|-----------------------------------------------------------------------------------------------------------|
     | id           | Number           | Gadget id                                                                                                 |
+    | netcore      | String           | Name of the netcore that holds this gadget                                                                |
     | dev          | Object           | Id and permanent address of which device owns this gadget. { id: 3, permAddr: '0x00124b0001ce4b89' }      |
     | panel        | Object           | Basic information about the gadget. { enabled: true, profile: 'home', class: 'temperature' }              |
     | props        | Object           | Meta-properties of this gadget. This is for client users to set something to the gadget                   |
