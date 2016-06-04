@@ -1,7 +1,7 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
-version: v0.1.2 (latest updated: 2016/6/2)
+version: v0.1.3 (latest updated: 2016/6/4)
 
 ## Table of Contents
 
@@ -154,6 +154,13 @@ version: v0.1.2 (latest updated: 2016/6/2)
 * 5.Appendix >> 
     * Gadget Information (gadInfo) Object  
         - Add Property 'auxId' to gadInfo object  
+
+####2016/6/4
+
+* 3.Data Model >> 
+    * Request
+        - Modify `exec` arguments example in namespace 'gad'
+    
 
 <br />
   
@@ -360,7 +367,7 @@ The request message is an object with keys { __intf, subsys, seq, id, cmd, args 
 | gad       | 'disable'      | { id }                   | Disable the gadget.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | gad       | 'read'         | { id, attrName }         | Read an attribute on a gadget. **id** is the id of which gadget you like to read from. **attrName** is the attribute you like to read. For example, given `{ id: 2316, attrName: 'sensorValue' }` to read the sensed value attribute from a temperature sensor (the sensor is a gadget with id = 2316).                                                                                                                                                                                                                                                                                      |
 | gad       | 'write'        | { id, attrName, value }  | Write a value to an attribute on a gadget. **id** is the id of which gadget you like to write a value to. **attrName** is the attribute to be written. For example, given `{ id: 1314, attrName: 'onOff', value: 1 }` to turn on a light bulb (the light bulb is a gadget with id = 1314).                                                                                                                                                                                                                                                                                                   |
-| gad       | 'exec'         | { id, attrName[, params] } | Invoke a remote procedure on a gadget. **id** is the id of which gadget you like to perform its particular procedure. **attrName** is the attribute name of an executable procedure. **params** is an array of parameters given in order to meet the procedure signature. The signature depends on how a developer declare his(/her) own procedure. For example, given `{ id: 9, attrName: 'blink', value: [ 10, 500 ] }` to blink a LED on a gadget 10 times with 500ms interval.                                                                                                         |
+| gad       | 'exec'         | { id, attrName[, params] } | Invoke a remote procedure on a gadget. **id** is the id of which gadget you like to perform its particular procedure. **attrName** is the attribute name of an executable procedure. **params** is an array of parameters given in order to meet the procedure signature. The signature depends on how a developer declare his(/her) own procedure. For example, given `{ id: 9, attrName: 'blink', params: [ 10, 500 ] }` to blink a LED on a gadget 10 times with 500ms interval.                                                                                                         |
 | gad       | 'setReportCfg' | { id, attrName, [rptCfg](#reportCfg) }    | Set the condition for an attribute reporting from a gadget.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | gad       | 'getReportCfg' | { id, attrName }         | Get the report settings of an attribute on a gadget.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | gad       | 'getProps'     | { id, propNames }        | Get gadget meta-properties. **propNames** is an array of strings and each string is a meta-property name, i.e., given `{ id: 8, propNames: [ 'description' ] }`.                                                                                                                                                                                                                                                                                                                                                                                                                             |
