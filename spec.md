@@ -1,7 +1,7 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
-version: v0.1.3 (latest updated: 2016/6/4)
+version: v0.1.4 (latest updated: 2016/6/12)
 
 ## Table of Contents
 
@@ -161,6 +161,11 @@ version: v0.1.3 (latest updated: 2016/6/4)
     * Request
         - Modify `exec` arguments example in namespace 'gad'
     
+####2016/6/12
+
+* 5.Appendix >> 
+    * Gadget Information (gadInfo) Object  
+        - Change key 'class' to 'classId' in `panel` object  
 
 <br />
   
@@ -631,7 +636,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
             panel: {
                 enabled: true,
                 profile: 'home_automation',
-                class: 'lightCtrl'
+                classId: 'lightCtrl'
             },
             props: {
                 name: 'sampleLight',
@@ -851,7 +856,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     | netcore      | String           | Name of the netcore that holds this gadget                                                                |
     | dev          | Object           | Id and permanent address of which device owns this gadget. { id: 3, permAddr: '0x00124b0001ce4b89' }      |
     | auxId        | String           | The auxiliary id to identify the gadget on a device                                                       |
-    | panel        | Object           | Basic information about the gadget. { enabled: true, profile: 'home', class: 'temperature' }              |
+    | panel        | Object           | Basic information about the gadget. { enabled: true, profile: 'home', classId: 'temperature' }              |
     | props        | Object           | Meta-properties of this gadget. This is for client users to set something to the gadget                   |
     | attrs        | Object           | Attributes of this gadget                                                                                 |
 
@@ -862,7 +867,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     |--------------|-----------------|-------------------------------------------------------------------------------------------------------|
     | enabled      | Boolean         | Is this gadget enabled?                                                                               |
     | profile      | String          | Optional. The profile defines the application environment, may mot be given.                          |
-    | class        | String          | The class defines what application the gadget is. The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl'                          |
+    | classId        | String          | The classId defines what application the gadget is. The [gadget class](#gadClasses) to denote its application, i.e. 'illuminance', 'temperature', 'lightCtrl'                          |
 
     <a name="gadPropsObj"></a>
     - `props` object
@@ -895,7 +900,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         panel: {
             enabled: true,
             profile: 'home_automation', // it will be an empty string '' if no profile given
-            class: 'lightCtrl'
+            classId: 'lightCtrl'
         },
         props: {    // props: name and description writable and can be modified by end-users
             name: 'sampleLight',
