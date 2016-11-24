@@ -1,7 +1,7 @@
 Freebird Client/Server Message Formats (through websocket)
 ===============
 
-version: v0.2.0 (latest updated: 2016/11/23)
+version: v0.2.1 (latest updated: 2016/11/24)
 
 ## Table of Contents
 
@@ -188,6 +188,13 @@ version: v0.2.0 (latest updated: 2016/11/23)
         - Add `dev.ping` with arguments of `{ id }`.
         - Modify `dev.getProps` arguments to `{ id[, propNames] }`. All props will be returned if **propNames** is not given.
         - Modify `gad.getProps` arguments to `{ id[, propNames] }`. All props will be returned if **propNames** is not given.
+
+####2016/11/24
+
+* 3.Data Model >> 
+    * Request
+        - Add a mandatory argument **mode** to `net.reset`.
+
 
 <br />
   
@@ -376,7 +383,7 @@ The request message is an object with keys { __intf, subsys, seq, id, cmd, args 
 | net       | 'getBlacklist' | { ncName }               | Get blacklist of the banned devices. **ncName** is the netcore name of which you like to get the blacklist from. **ncName** should be a string. i.e., given `{ ncName: 'ble-core' }`                                                                                                                                                                                                                                                                                                                                                                                                         |
 | net       | 'permitJoin'   | { [ncName,] duration }   | Allow or disallow devices to join the network. **ncName** is the name of which netcore you like to allow for device joining and **ncName** should be a string if given. All netcores will allow for device joining if **ncName** is not given. **duration** is the time in seconds which should be a number. Set duration to 0 will immediately close the admission. For example, given `{ ncName: 'zigbee-core', duration: 60 }` will allow zigbee devices to join the zigbee network for 60 seconds.                                                                                       |
 | net       | 'maintain'     | { [ncName] }             | Maintain the network. **ncName** is the name of which netcore you like to maintain. **ncName** should be a string if given. All netcores will enter maintaining mode if **ncName** is not given. When a netcore starts to maintain its own network, all devices managed by it will be refreshed. For example, given `{ ncName: 'ble-core' }` to let the BLE netcore do its maintenance.                                                                                                                                                                                                      |
-| net       | 'reset'        | { [ncName] }             | Reset the network. **ncName** is the name of which netcore you like to reset. **ncName** should be a string if given. It will reset all netcores if **ncName** is not given. Reset a network will remove all devices managed by that netcore. Once reset, the banned devices in the netcore blacklist will also be removed.                                                                                                                                                                                                                                                                  |
+| net       | 'reset'        | { [ncName,] mode }       | Reset the network. **ncName** is the name of which netcore you like to reset. **ncName** should be a string if given. It will reset all netcores if **ncName** is not given. Reset a network will remove all devices managed by that netcore. Given **mode** with 1 for a HARD reset while with 0 for a SOFT reset. Once reset, the banned devices in the netcore blacklist will also be removed.                                                                                                                                                                                            |
 | net       | 'enable'       | { [ncName] }             | Enable the network. **ncName** is the name of which netcore you like to enable. It will enable all netcores if **ncName** is not given. (All netcores are enabled by default.)                                                                                                                                                                                                                                                                                                                                                                                                               |
 | net       | 'disable'      | { [ncName] }             | Disable the network. **ncName** is the name of which netcore you like to disable.It will disable all netcores if **ncName** is not given. If netcore is disabled, no messages can be send out and received from remote devices. That is, messages will be ignored and you will not get any message from the netcore on freebird Server.                                                                                                                                                                                                                                                      |
 | net       | 'ban'          | { ncName, permAddr }     | Ban a device from the network. Once a device has been banned, freebird will always reject its joining request. If a device is already in the network, freebird will first remove it from the network. **ncName** is the netcore that manages the device you'd like to ban. **permAddr** is the permanent address of  the banned device. For example, given `{ ncName: 'zigbee-core', permAddr: '0x00124b0001ce4b89' }` to ban a zigbee device with an IEEE address of 0x00124b0001ce4b89. The permanent address depends on protocol, such as IEEE address for zigbee devices, BD address for BLE devices, and MAC address for IP-based devices. |
