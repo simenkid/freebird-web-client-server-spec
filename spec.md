@@ -204,6 +204,20 @@ version: v0.3.0 (latest updated: 2016/12/12)
     * Response
         - Rename `getReportCfg` to `readReportCfg`
         - Rename `setReportCfg` to `writeReportCfg`
+
+####2017/01/20
+
+* 3.Data Model >>
+    * Response
+        - Add `enable` and `disable` reponses in namespace 'dev'  
+        - Add `data` field of `ban` and `unban` response in namespace 'net'
+        - Add `data` field of `writeReportCfg` in namespace 'gad'
+    * Indication
+        - Modify `error` data object to `{ netcore, message }` in namespace 'net', 'dev' and 'gad'
+        - Remove `attrsReport` indication in namespace 'dev'
+        - Add data object of `devLeaving` in namespace 'dev'
+        - Add data object of `gadLeaving` in namespace 'gad'
+
 <br />
   
 <a name="Overiew"></a>  
@@ -343,7 +357,6 @@ The `__intf` field in a message can be 'REQ', 'RSP' or 'IND' to denote the inter
     | dev     | 'statusChanged'      | Status of a device has changed. The status can be 'online', 'sleep', 'offline', and 'unknown'  |
     | dev     | 'propsChanged'       | Meta-property(ies) of a device has changed                                                     |
     | dev     | 'attrsChanged'       | Attribue(s) on a device has changed                                                            |
-    | dev     | 'attrsReport'        | A report message of certain attribute(s) on a device.                                          |
     | gad     | 'error'              | Gadget error occurs                                                                            |
     | gad     | 'gadIncoming'        | A new gadget is incoming                                                                       |
     | gad     | 'gadLeaving'         | A gadget is leaving                                                                            |
@@ -424,39 +437,41 @@ The request message is an object with keys { __intf, subsys, seq, id, cmd, args 
   
 The response message is an object with keys { __intf, subsys, seq, id, cmd, status, data }. `status` shows if the request is successful. The `data` field contains the respond data according to the request. `data` will always be an object, and it will be an empty object if the request is unsuccessful.  
   
-| Subsystem | Command Name     | Data Key:Type      | Data Description                                     | Example                                               |
-|-----------|------------------|--------------------|------------------------------------------------------|------------------------------------------------------ |
-| net       | 'getAllDevIds'   | ids:Number[]       | Array of device identifiers                          | { ids: [ 1, 2, 3, 8, 12 ] }                           |
-| net       | 'getAllGadIds'   | ids:Number[]       | Array of gadget identifiers                          | { ids: [ 2, 3, 5, 11, 12, 13, 14, 15 ] }              |
-| net       | 'getDevs'        | devs:devInfo[]     | Array of device information objects                  | { devs: [ [devInfo](#devInfoObj), ...  ] }            |
-| net       | 'getGads'        | gads:gadInfo[]     | Array of gadget information objects                  | { gads: [ [gadInfo](#gadInfoObj) , ... ] }            |
-| net       | 'getNetcores'    | netcores:ncInfo[]  | Array of netcore information objects                 | { netcores: [ [ncInfo](#ncInfoObj), ... ] }           |
-| net       | 'getBlacklist'   | list:String[]      | Array of banned device permanent address             | { list: [ '0x00124b0001ce4b89', ... ] }               |
-| net       | 'permitJoin'     | -                  | Response contains no data                            | {}                                                    |
-| net       | 'maintain'       | -                  | Response contains no data                            | {}                                                    |
-| net       | 'reset'          | -                  | Response contains no data                            | {}                                                    |
-| net       | 'enable'         | -                  | Response contains no data                            | {}                                                    |
-| net       | 'disable'        | -                  | Response contains no data                            | {}                                                    |
-| net       | 'ban'            | -                  | Response contains no data                            | {}                                                    |
-| net       | 'unban'          | -                  | Response contains no data                            | {}                                                    |
-| net       | 'remove'         | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }                    |
-| net       | 'ping'           | time:Number        | Round-trip time in ms                                | { time: 12 }                                          |
-| dev       | 'enable'         | enabled:Boolean    | To show if the device is enabled                     | { enabled: true }                                     |
-| dev       | 'disable'        | enabled:Boolean    | To show if the device is enabled                     | { enabled: false }                                    |
-| dev       | 'read'           | value:Depends      | The read value. Can be anything                      | { value: 3 }                                          |
-| dev       | 'write'          | value:Depends      | The written value. Can be anything                   | { value: 'kitchen' }                                  |
-| dev       | 'identify'       | -                  | Response contains no data                            | {}                                                    |
+| Subsystem | Command Name     | Data Key:Type      | Data Description                                     | Example                                                |
+|-----------|------------------|--------------------|------------------------------------------------------|--------------------------------------------------------|
+| net       | 'getAllDevIds'   | ids:Number[]       | Array of device identifiers                          | { ids: [ 1, 2, 3, 8, 12 ] }                            |
+| net       | 'getAllGadIds'   | ids:Number[]       | Array of gadget identifiers                          | { ids: [ 2, 3, 5, 11, 12, 13, 14, 15 ] }               |
+| net       | 'getDevs'        | devs:devInfo[]     | Array of device information objects                  | { devs: [ [devInfo](#devInfoObj), ...  ] }             |
+| net       | 'getGads'        | gads:gadInfo[]     | Array of gadget information objects                  | { gads: [ [gadInfo](#gadInfoObj) , ... ] }             |
+| net       | 'getNetcores'    | netcores:ncInfo[]  | Array of netcore information objects                 | { netcores: [ [ncInfo](#ncInfoObj), ... ] }            |
+| net       | 'getBlacklist'   | list:String[]      | Array of banned device permanent address             | { list: [ '0x00124b0001ce4b89', ... ] }                |
+| net       | 'permitJoin'     | -                  | Response contains no data                            | {}                                                     |
+| net       | 'maintain'       | -                  | Response contains no data                            | {}                                                     |
+| net       | 'reset'          | -                  | Response contains no data                            | {}                                                     |
+| net       | 'enable'         | -                  | Response contains no data                            | {}                                                     |
+| net       | 'disable'        | -                  | Response contains no data                            | {}                                                     |
+| net       | 'ban'            | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }                     |
+| net       | 'unban'          | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }                     |
+| net       | 'remove'         | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }                     |
+| net       | 'ping'           | time:Number        | Round-trip time in ms                                | { time: 12 }                                           |
+| dev       | 'enable'         | enabled:Boolean    | To show if the device is enabled                     | { enabled: true }                                      |
+| dev       | 'disable'        | enabled:Boolean    | To show if the device is enabled                     | { enabled: false }                                     |
+| dev       | 'read'           | value:Depends      | The read value. Can be anything                      | { value: 3 }                                           |
+| dev       | 'write'          | value:Depends      | The written value. Can be anything                   | { value: 'kitchen' }                                   |
+| dev       | 'identify'       | -                  | Response contains no data                            | {}                                                     |
+| dev       | 'remove'         | permAddr:String    | Device permanent address                             | { permAddr: '0x00124b0001ce4b89' }                     |
+| dev       | 'ping'           | time:Number        | Round-trip time in ms                                | { time: 12 }                                           |
 | dev       | 'getProps'       | props:Depends      | Meta-properties got. The props got is an object.     | { props: { name: 'mywifi-dev', location: 'kitchen' } } |
-| dev       | 'setProps'       | -                  | Response contains no data                            | {}                                                    |
-| gad       | 'enable'         | enabled:Boolean    | To show if the gadget is enabled                     | { enabled: true }                                     |
-| gad       | 'disable'        | enabled:Boolean    | To show if the gadget is enabled                     | { enabled: false }                                    |
-| gad       | 'read'           | value:Depends      | The read value. Can be anything                      | { value: 371.42 }                                     |
-| gad       | 'write'          | value:Depends      | The written value. Can be anything                   | { value: false }                                      |
-| gad       | 'exec'           | result:Depends     | The data returned by the procedure. Can be anything  | { result: 'completed' }                               |
-| gad       | 'writeReportCfg' | -                  | Response contains no data                            | {}                                                    |
-| gad       | 'readReportCfg'  | cfg:Object         | Report settings object                               | { cfg: [rptCfg](#reportCfg) }                         |
-| gad       | 'getProps'       | props:Depends      | Meta-properties got. The props got is an object.     | { props: { name: 'mysensor1' } }                      |
-| gad       | 'setProps'       | -                  | Response contains no data                            | {}                                                    |
+| dev       | 'setProps'       | -                  | Response contains no data                            | {}                                                     |
+| gad       | 'enable'         | enabled:Boolean    | To show if the gadget is enabled                     | { enabled: true }                                      |
+| gad       | 'disable'        | enabled:Boolean    | To show if the gadget is enabled                     | { enabled: false }                                     |
+| gad       | 'read'           | value:Depends      | The read value. Can be anything                      | { value: 371.42 }                                      |
+| gad       | 'write'          | value:Depends      | The written value. Can be anything                   | { value: false }                                       |
+| gad       | 'exec'           | result:Depends     | The data returned by the procedure. Can be anything  | { result: 'completed' }                                |
+| gad       | 'writeReportCfg' | result: Boolean    | To show if the reporting configuration is written    | { result: true }                                       |
+| gad       | 'readReportCfg'  | cfg:Object         | Report settings object                               | { cfg: [rptCfg](#reportCfg) }                          |
+| gad       | 'getProps'       | props:Depends      | Meta-properties got. The props got is an object.     | { props: { name: 'mysensor1' } }                       |
+| gad       | 'setProps'       | -                  | Response contains no data                            | {}                                                     |
   
 
 ********************************************
@@ -470,7 +485,7 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
 
 | subsys  | Indication Type     | Data Object **Key:Type**                                       | Description                                                                                    |
 |---------|---------------------|----------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| net     | 'error'             | `{ netcore:String, error: { code:Number, info:String } }`      | Netcore error occurs                                                                           |
+| net     | 'error'             | `{ netcore:String, message: String }`                          | Netcore error occurs                                                                           |
 | net     | 'started'           | `{ netcore:String }`                                           | A netcore is started                                                                           |
 | net     | 'stopped'           | `{ netcore:String }`                                           | A netcore is stopped                                                                           |
 | net     | 'enabled'           | `{ netcore:String }`                                           | A netcore is enabled                                                                           |
@@ -480,17 +495,16 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
 | net     | 'bannedGadIncoming' | `{ netcore:String, permAddr:String, auxId:String \| Number }`  | A banned gadget is trying to join the network                                                  |
 | net     | 'bannedDevReporting'| `{ netcore:String, permAddr:String }`                          | A banned device is trying to report its attributes                                             |
 | net     | 'bannedGadReporting'| `{ netcore:String, permAddr:String, auxId:String \| Number }`  | A banned gadget is trying to report its attributes                                             |
-| dev     | 'error'             | `{ code:Number, info:String }`                                 | Device error occurs                                                                            |
+| dev     | 'error'             | `{ netcore:String, message: String }`                          | Device error occurs                                                                            |
 | dev     | 'devIncoming'       | [devInfo](#devInfoObj)                                         | A new device is incoming                                                                       |
-| dev     | 'devLeaving'        | -                                                              | A device is leaving                                                                            |
+| dev     | 'devLeaving'        | `{ netcore:String, permAddr:String }`                          | A device is leaving                                                                            |
 | dev     | 'netChanged'        | [netInfo](#netInfoObj)                                         | Network information of a device has changed                                                    |
 | dev     | 'statusChanged'     | `{ status:String }`                                            | Status of a device has changed. The status can be 'online', 'sleep', 'offline', and 'unknown'  |
 | dev     | 'propsChanged'      | [devInfo.props](#devPropsObj)                                  | Meta-property(ies) of a device has changed                                                     |
 | dev     | 'attrsChanged'      | [devInfo.attrs](#devAttrsObj)                                  | Attribue(s) on a device has changed                                                            |
-| dev     | 'attrsReport'       | [devInfo.attrs](#devAttrsObj)                                  | A report message of certain attribute(s) on a device.                                          |
-| gad     | 'error'             | `{ code:Number, info:String }`                                 | Gadget error occurs                                                                            |
+| gad     | 'error'             | `{ netcore:String, message: String }`                          | Gadget error occurs                                                                            |
 | gad     | 'gadIncoming'       | [gadInfo](#gadInfoObj)                                         | A new gadget is incoming                                                                       |
-| gad     | 'gadLeaving'        | -                                                              | A gadget is leaving                                                                            |
+| gad     | 'gadLeaving'        | `{ netcore:String, permAddr:String, auxId:String \| Number }`  | A gadget is leaving                                                                            |
 | gad     | 'panelChanged'      | [gadInfo.pannel](#gadPanelObj)                                 | Panel information of a gadget has changed                                                      |
 | gad     | 'propsChanged'      | [gadInfo.props](#gadPropsObj)                                  | Meta-property(ies) of a gadget has changed                                                     |
 | gad     | 'attrsChanged'      | [gadInfo.attrs](#gadAttrsObj)                                  | Attribue(s) on a gadget has changed                                                            |
@@ -576,7 +590,10 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         subsys: 'dev',
         type: 'devLeaving',
         id: 27,                   // device id is 27
-        data: undefined
+        data: { 
+            netcore: 'zigbee-core', 
+            permAddr: '0x00124b0001ce4b89' 
+        }
     }
     ```
   
@@ -642,22 +659,6 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
     }
     ```
 
-* Indication Example: indMsg of device 'attrsReport'  
-  
-    ```js
-    {
-        __intf: 'IND',
-        subsys: 'dev',
-        type: 'attrsReport',
-        id: 77,                   // device id is 77
-        data: {
-            power: {
-                voltage: '12V'
-            }
-        }
-    }
-    ```
-
 * Indication Example: indMsg of 'gadIncoming'  
   
     ```js
@@ -697,7 +698,11 @@ The indication message is an object with keys { __intf, subsys, type, id, data }
         subsys: 'gad',
         type: 'gadLeaving',
         id: 41,                   // gadget id is 41
-        data: undefined
+        data: { 
+            netcore: 'mqtt-core', 
+            permAddr: '0x123456789abcdef',
+            auxId: 'temperature/0' 
+        }
     }
     ```
   
